@@ -1,11 +1,14 @@
 import java.io.*;
 import java.util.ArrayList;
 
+import static java.util.Collections.sort;
+
 public class Graphe {
 
     private ArrayList<Sommet> sommets;
     private ArrayList<Arete> aretes;
     private File file;
+
 
     public Graphe() throws IOException {
         this.sommets = new ArrayList<Sommet>();
@@ -98,6 +101,19 @@ public class Graphe {
         }
     }
 
+    public ArrayList<Integer> sortAreteByTemps() {
+        ArrayList<Integer> areteTrie = new ArrayList<Integer>();
+//        int cpt = 0;
+        for (Arete arete : this.getAretes()) {
+            areteTrie.add(arete.getTps());
+//            cpt++;
+        }
+//        System.out.println(cpt);
+        sort(areteTrie);
+//        System.out.println(areteTrie);
+        return areteTrie;
+    }
+
     public ArrayList<Sommet> adjacence(Sommet s) {
         ArrayList<Integer> adjacents = new ArrayList<>();
         ArrayList<Sommet> sommetsAdjacents = new ArrayList<Sommet>();
@@ -131,6 +147,20 @@ public class Graphe {
             }
         }
         return true;
+    }
+
+    public int kruskal() {
+        ArrayList<Integer> areteByTemps= sortAreteByTemps();
+        int cpt = 0;
+        int acpm = 0;
+        for(Arete arete : this.aretes) {
+            if(arete.getTps() == areteByTemps.get(cpt) && arete.isAreteVisitee() == false) {
+                acpm += areteByTemps.get(cpt);
+                cpt++;
+                arete.setAreteVisitee(true);
+            }
+        }
+        return acpm;
     }
 
 }

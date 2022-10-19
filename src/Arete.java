@@ -1,9 +1,14 @@
+import java.util.ArrayList;
+
+import static java.util.Collections.sort;
+
 public class Arete {
 
     private int num_sommet1;
     private int num_sommet2;
     private int tps;
 
+    private boolean areteVisitee = false;
 
     public Arete(int s1, int s2, int t)
     {
@@ -19,9 +24,16 @@ public class Arete {
         this.tps = 0;
     }
 
-    public Arete()
-    {
+    public Arete() {
 
+    }
+
+    public boolean isAreteVisitee() {
+        return areteVisitee;
+    }
+
+    public void setAreteVisitee(boolean areteVisitee) {
+        this.areteVisitee = areteVisitee;
     }
 
 

@@ -12,8 +12,8 @@ public class Main {
         Sommet Porte_DIvry = g.getSommets().get(261);
         Sommet PorteDeChoisy = g.getSommets().get(266);
 //        g.adjacence(Porte_DIvry);
-        g.connexite(Porte_DIvry);
-
+//        g.connexite(Porte_DIvry);
+        System.out.println(g.kruskal());
 
 
     }
