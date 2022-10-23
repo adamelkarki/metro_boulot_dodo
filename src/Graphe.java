@@ -103,14 +103,14 @@ public class Graphe {
 
     public ArrayList<Integer> sortAreteByTemps() {
         ArrayList<Integer> areteTrie = new ArrayList<Integer>();
-//        int cpt = 0;
+        int cpt = 0;
         for (Arete arete : this.getAretes()) {
             areteTrie.add(arete.getTps());
-//            cpt++;
+            cpt++;
         }
-//        System.out.println(cpt);
+        System.out.println(cpt);
         sort(areteTrie);
-//        System.out.println(areteTrie);
+        System.out.println(areteTrie);
         return areteTrie;
     }
 
@@ -154,7 +154,7 @@ public class Graphe {
         int cpt = 0;
         int acpm = 0;
         for(Arete arete : this.aretes) {
-            if(arete.getTps() == areteByTemps.get(cpt) && arete.isAreteVisitee() == false) {
+            if( arete.isAreteVisitee() == false) {
                 acpm += areteByTemps.get(cpt);
                 cpt++;
                 arete.setAreteVisitee(true);
