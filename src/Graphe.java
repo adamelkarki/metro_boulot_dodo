@@ -1,5 +1,9 @@
+import sun.reflect.generics.tree.Tree;
+
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.TreeMap;
 
 import static java.util.Collections.sort;
 
@@ -29,9 +33,7 @@ public class Graphe {
         this.sommets = sommets;
     }
 
-    public ArrayList<Arete> getAretes() {
-        return this.aretes;
-    }
+    public ArrayList<Arete> getAretes() { return this.aretes; }
 
 
     public void setAretes(ArrayList<Arete> aretes) {
@@ -51,6 +53,7 @@ public class Graphe {
         boolean terminus = false;
 
         //Arêtes
+        int id = 0;
         int sommetA = 0;
         int sommetB = 0;
         int tps = 0;
@@ -86,33 +89,30 @@ public class Graphe {
                 String [] regex = line.split(" ");
 
                 sommetA = Integer.parseInt(regex[1]);
-                sommetB = Integer.parseInt(regex[2]);
+                sommetB = Integer.parseInt(regex[1]);
                 tps = Integer.parseInt(regex[3]);
+                id++;
 
                 //System.out.println(sommetA);
                 //System.out.println(sommetB);
                 //System.out.println(tps);
 
-                Arete a = new Arete(sommetA, sommetB, tps);
-//                System.out.println(a.toString());
+                Arete a = new Arete(sommetA, sommetB, tps,id);
+                //System.out.println(a.toString());
                 this.aretes.add(a);
 
             }
         }
     }
 
-    public ArrayList<Integer> sortAreteByTemps() {
-        ArrayList<Integer> areteTrie = new ArrayList<Integer>();
-        int cpt = 0;
-        for (Arete arete : this.getAretes()) {
-            areteTrie.add(arete.getTps());
-            cpt++;
-        }
-        System.out.println(cpt);
-        sort(areteTrie);
-        System.out.println(areteTrie);
-        return areteTrie;
-    }
+//    public TreeMap<Integer,Integer> sortAreteByTemps() {
+//        TreeMap<Integer,Integer> areteTrieParTemps = new TreeMap<>();
+//        for (Arete arete : this.getAretes()) {
+//            areteTrieParTemps.put(arete.getTps(),arete.getId());
+//        }
+//        System.out.println(areteTrieParTemps);
+//        return areteTrieParTemps;
+//    }
 
     public ArrayList<Sommet> adjacence(Sommet s) {
         ArrayList<Integer> adjacents = new ArrayList<>();
@@ -150,14 +150,14 @@ public class Graphe {
     }
 
     public int kruskal() {
-        ArrayList<Integer> areteByTemps= sortAreteByTemps();
-        int cpt = 0;
+        Collections.sort(this.aretes);
+        TreeMap<Integer,Integer> sommetsVisites = new TreeMap<>();
         int acpm = 0;
-        for(Arete arete : this.aretes) {
-            if( arete.isAreteVisitee() == false) {
-                acpm += areteByTemps.get(cpt);
-                cpt++;
-                arete.setAreteVisitee(true);
+
+        for(Arete arete : this.getAretes()) {
+            if((!sommetsVisites.containsKey(arete.getNum_sommet1()) && !sommetsVisites.containsValue(arete.getNum_sommet2())) || (!sommetsVisites.containsKey(arete.getNum_sommet2()) && !sommetsVisites.containsValue(arete.getNum_sommet1()))) {
+                sommetsVisites.put(arete.getNum_sommet1(),arete.getNum_sommet2());
+                acpm += arete.getTps();
             }
         }
         return acpm;

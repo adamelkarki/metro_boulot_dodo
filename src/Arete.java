@@ -2,18 +2,29 @@ import java.util.ArrayList;
 
 import static java.util.Collections.sort;
 
-public class Arete {
+public class Arete implements Comparable<Arete>{
 
+
+    private int id;
     private int num_sommet1;
     private int num_sommet2;
     private int tps;
 
     private boolean areteVisitee = false;
 
-    public Arete(int s1, int s2, int t)
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Arete(int s1, int s2, int t, int identifiant)
     {
         this.num_sommet1 = s1;
         this.num_sommet2 = s2;
+        this.id = identifiant;
         this.tps = t;
     }
 
@@ -63,9 +74,12 @@ public class Arete {
 
     @Override
     public String toString() {
-        Sommet s1 = new Sommet(this.getNum_sommet1());
-        Sommet s2 = new Sommet(this.getNum_sommet2());
 //        return "Pour aller de " + s1.getNom_sommet() + " à " + s2.getNom_sommet() + " il vous faudra " + this.getTps();
         return this.getNum_sommet1() + " " + this.getNum_sommet2() + " " + this.getTps();
+    }
+
+    @Override
+    public int compareTo(Arete o) {
+        return this.getTps()-o.getTps();
     }
 }
