@@ -28,6 +28,8 @@ public class Sommet {
         this.num_sommet = ns;
     }
 
+    public Sommet() { }
+
     public int getNum_sommet() {
         return this.num_sommet;
     }

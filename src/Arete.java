@@ -5,26 +5,17 @@ import static java.util.Collections.sort;
 public class Arete implements Comparable<Arete>{
 
 
-    private int id;
     private int num_sommet1;
     private int num_sommet2;
     private int tps;
 
     private boolean areteVisitee = false;
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Arete(int s1, int s2, int t, int identifiant)
+    public Arete(int s1, int s2, int t)
     {
         this.num_sommet1 = s1;
         this.num_sommet2 = s2;
-        this.id = identifiant;
         this.tps = t;
     }
 

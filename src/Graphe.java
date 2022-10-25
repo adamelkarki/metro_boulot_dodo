@@ -1,5 +1,3 @@
-import sun.reflect.generics.tree.Tree;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +51,6 @@ public class Graphe {
         boolean terminus = false;
 
         //Arêtes
-        int id = 0;
         int sommetA = 0;
         int sommetB = 0;
         int tps = 0;
@@ -89,32 +86,22 @@ public class Graphe {
                 String [] regex = line.split(" ");
 
                 sommetA = Integer.parseInt(regex[1]);
-                sommetB = Integer.parseInt(regex[1]);
+                sommetB = Integer.parseInt(regex[2]);
                 tps = Integer.parseInt(regex[3]);
-                id++;
 
                 //System.out.println(sommetA);
                 //System.out.println(sommetB);
                 //System.out.println(tps);
 
-                Arete a = new Arete(sommetA, sommetB, tps,id);
-                //System.out.println(a.toString());
+                Arete a = new Arete(sommetA, sommetB, tps);
+//                System.out.println(a.toString());
                 this.aretes.add(a);
 
             }
         }
     }
 
-//    public TreeMap<Integer,Integer> sortAreteByTemps() {
-//        TreeMap<Integer,Integer> areteTrieParTemps = new TreeMap<>();
-//        for (Arete arete : this.getAretes()) {
-//            areteTrieParTemps.put(arete.getTps(),arete.getId());
-//        }
-//        System.out.println(areteTrieParTemps);
-//        return areteTrieParTemps;
-//    }
-
-    public ArrayList<Sommet> adjacence(Sommet s) {
+    public ArrayList<Sommet> sommetsAdjacencents(Sommet s) {
         ArrayList<Integer> adjacents = new ArrayList<>();
         ArrayList<Sommet> sommetsAdjacents = new ArrayList<Sommet>();
         for (Arete a : this.getAretes()) {
@@ -132,14 +119,25 @@ public class Graphe {
                 }
             }
         }
+//        System.out.println(sommetsAdjacents);
         return sommetsAdjacents;
+    }
+
+    public ArrayList<Arete> aretesAdjacentes(Sommet s) {
+        ArrayList<Arete> aretesAdjacentes = new ArrayList<Arete>();
+        for (Arete a : this.getAretes()) {
+            if(a.getNum_sommet2() == s.getNum_sommet() || a.getNum_sommet1() == s.getNum_sommet()) {
+                aretesAdjacentes.add(a);
+            }
+        }
+//        System.out.println(aretesAdjacentes);
+        return aretesAdjacentes;
     }
 
     public boolean connexite(Sommet s1) {
         s1.setSommetVisite(true);
-        ArrayList<Sommet>  sommetsAdjacents = adjacence(s1);
-        System.out.println(sommetsAdjacents);
-
+        ArrayList<Sommet>  sommetsAdjacents = sommetsAdjacencents(s1);
+        //System.out.println(sommetsAdjacents);
 
         for(Sommet next : sommetsAdjacents) {
             if(next.isSommetVisite() == false){
@@ -161,6 +159,10 @@ public class Graphe {
             }
         }
         return acpm;
+    }
+
+    public TreeMap<Sommet, Integer> dikjstra(Sommet sommetSource, Sommet destination) {
+
     }
 
 }
