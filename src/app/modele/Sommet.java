@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
 public class Sommet {
 
     private int num_sommet;
@@ -15,9 +16,6 @@ public class Sommet {
     private boolean terminus;
     private int branchement;
     private boolean sommetVisite = false;
-
-
-
 
     public Sommet(int ns, String nom, String num, boolean t, int b)
     {
@@ -28,6 +26,8 @@ public class Sommet {
         this.branchement = b;
 
     }
+
+
 
 
     public boolean isSommetVisite() {
@@ -90,13 +90,18 @@ public class Sommet {
         return num_sommet == sommet.num_sommet && terminus == sommet.terminus && branchement == sommet.branchement && sommetVisite == sommet.sommetVisite && Objects.equals(nom_sommet, sommet.nom_sommet) && Objects.equals(num_ligne, sommet.num_ligne);
     }
 
+
     @Override
     public int hashCode() {
         return Objects.hash(num_sommet, nom_sommet, num_ligne, terminus, branchement, sommetVisite);
     }
 
+
+
     @Override
     public String toString() {
         return getNom_sommet() + " " + getNum_sommet() + " " + getNum_ligne() + " " + isTerminus() + " " + getBranchement();
     }
+
+
 }
