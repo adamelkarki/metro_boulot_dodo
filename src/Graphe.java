@@ -6,7 +6,6 @@ import static java.util.Collections.sort;
 public class Graphe {
 
     private ArrayList<Sommet> sommets;
-    private Map<Integer, Integer> result = new HashMap<>();
     private ArrayList<Arete> aretes;
     private File file;
 
@@ -138,7 +137,6 @@ public class Graphe {
     public boolean connexite(Sommet s1) {
         s1.setSommetVisite(true);
         ArrayList<Sommet> sommetsAdjacents = sommetsAdjacencents(s1);
-        //System.out.println(sommetsAdjacents);
 
         for (Sommet next : sommetsAdjacents) {
             if (next.isSommetVisite() == false) {
@@ -162,15 +160,17 @@ public class Graphe {
         Collections.sort(this.aretes);
         TreeMap<Integer, Integer> sommetsVisites = new TreeMap<>();
         ArrayList<Arete> areteArrayList = new ArrayList<>();
-        int acpm = 0;
+        int poidsDeLarbre = 0;
 
         for (Arete arete : this.getAretes()) {
-            if ((!sommetsVisites.containsKey(arete.getNum_sommet1()) && !sommetsVisites.containsValue(arete.getNum_sommet2())) || (!sommetsVisites.containsKey(arete.getNum_sommet2()) && !sommetsVisites.containsValue(arete.getNum_sommet1()))) {
+            if ((!sommetsVisites.containsKey(arete.getNum_sommet1()) || !sommetsVisites.containsValue(arete.getNum_sommet2())) &&
+                    (!sommetsVisites.containsKey(arete.getNum_sommet2()) || !sommetsVisites.containsValue(arete.getNum_sommet1()))) {
                 sommetsVisites.put(arete.getNum_sommet1(), arete.getNum_sommet2());
-                acpm += arete.getTps();
+                poidsDeLarbre += arete.getTps();
                 areteArrayList.add(arete);
             }
         }
+        System.out.println(sommetsVisites.get(259));
         return areteArrayList;
     }
 

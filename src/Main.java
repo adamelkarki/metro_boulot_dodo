@@ -21,16 +21,13 @@ public class Main {
 //        System.out.println(g.getAretes());
 //        System.out.println(g.sommetsAdjacencents(Porte_DIvry));
 //        System.out.println(g.aretesAdjacentes(MaisonBlanche));
-//        g.connexite(Porte_DIvry);
-//        System.out.println(g.kruskal());
+//        g.connexite(Mairie_DIvry);
+        System.out.println(g.kruskal());
 //        System.out.println(g.sommetsAdjacencents(PorteDeChoisy));
 //        System.out.println(g.sommetsAdjacencents(s1));
 //        System.out.println(g.sommetsAdjacencents(PierreEtMarieCurie));
-        System.out.println(g.dikjstra(Mairie_DIvry,sommetRandom));
+//        System.out.println(g.dikjstra(Mairie_DIvry,sommetRandom));
 //        System.out.println(g.distanceSommetsVoisins(Mairie_DIvry,PierreEtMarieCurie));
-
-
-
     }
 
 
