@@ -1,9 +1,6 @@
-import javax.print.attribute.standard.PresentationDirection;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
 
-import static java.util.Collections.replaceAll;
 import static java.util.Collections.sort;
 
 public class Graphe {
@@ -151,18 +148,20 @@ public class Graphe {
         return true;
     }
 
-    public int kruskal() {
+    public ArrayList<Arete> kruskal() {
         Collections.sort(this.aretes);
         TreeMap<Integer, Integer> sommetsVisites = new TreeMap<>();
+        ArrayList<Arete> areteArrayList = new ArrayList<>();
         int acpm = 0;
 
         for (Arete arete : this.getAretes()) {
             if ((!sommetsVisites.containsKey(arete.getNum_sommet1()) && !sommetsVisites.containsValue(arete.getNum_sommet2())) || (!sommetsVisites.containsKey(arete.getNum_sommet2()) && !sommetsVisites.containsValue(arete.getNum_sommet1()))) {
                 sommetsVisites.put(arete.getNum_sommet1(), arete.getNum_sommet2());
                 acpm += arete.getTps();
+                areteArrayList.add(arete);
             }
         }
-        return acpm;
+        return areteArrayList;
     }
 
     public Map<Integer, Integer> dikjstra(Sommet sommetSource, Sommet destination) {
@@ -201,7 +200,8 @@ public class Graphe {
                 }
             }
             for (Sommet sommet : sommetsFinaux) {
-                dikjstra(sommet, destination);
+                    System.out.println(sommet);
+                    dikjstra(sommet, destination);
             }
         }
         return this.result;

@@ -21,11 +21,11 @@ public class Main {
 //        System.out.println(g.sommetsAdjacencents(Porte_DIvry));
 //        g.aretesAdjacentes(Porte_DIvry);
 //        g.connexite(Porte_DIvry);
-////        System.out.println(g.kruskal());
+        System.out.println(g.kruskal());
 //        System.out.println(g.sommetsAdjacencents(PorteDeChoisy));
 //        System.out.println(g.sommetsAdjacencents(s1));
 //        System.out.println(g.sommetsAdjacencents(PierreEtMarieCurie));
-        System.out.println(g.dikjstra(Mairie_DIvry,PlaceDItalie));
+        System.out.println(g.dikjstra(Mairie_DIvry,sommetRandom));
 
 
 
