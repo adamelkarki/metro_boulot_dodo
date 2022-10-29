@@ -240,7 +240,7 @@ V 0238 Pigalle ;12 ;False 0
 V 0239 Pigalle ;2 ;False 0
 V 0240 Place Balard ;8 ;True 0
 V 0241 Place Monge ;7 ;False 0
-V 0242 Place d'Italie ;5 ;True 0
+V 0242 flie ;5 ;True 0
 V 0243 Place d'Italie ;6 ;False 0
 V 0244 Place d'Italie ;7 ;False 0
 V 0245 Place de Clichy ;13 ;False 0

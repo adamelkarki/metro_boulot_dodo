@@ -148,6 +148,16 @@ public class Graphe {
         return true;
     }
 
+    public int distanceSommetsVoisins (Sommet sommet1, Sommet sommet2) {
+        int distance = 0;
+        for (Arete arete : this.getAretes()) {
+            if((arete.getNum_sommet1() == sommet1.getNum_sommet() && arete.getNum_sommet2() == sommet2.getNum_sommet()) || (arete.getNum_sommet2() == sommet1.getNum_sommet() && arete.getNum_sommet1() == sommet2.getNum_sommet())) {
+                distance = arete.getTps();
+            }
+        }
+        return distance;
+    }
+
     public ArrayList<Arete> kruskal() {
         Collections.sort(this.aretes);
         TreeMap<Integer, Integer> sommetsVisites = new TreeMap<>();
@@ -164,47 +174,122 @@ public class Graphe {
         return areteArrayList;
     }
 
-    public Map<Integer, Integer> dikjstra(Sommet sommetSource, Sommet destination) {
-        int sommetAdjacent = 0;
-        sommetSource.setSommetVisite(true);
-        ArrayList<Sommet> voisins = sommetsAdjacencents(sommetSource);
-        ArrayList<Arete> voisines = aretesAdjacentes(sommetSource);
-
-        //On retourne result lorsque les deux sommets sont voisins
-        for (Arete arete : voisines) {
-            if (arete.getNum_sommet1() == sommetSource.getNum_sommet()) {
-                sommetAdjacent = arete.getNum_sommet2();
-                this.result.put(sommetAdjacent, arete.getTps());
-            }
-            if (arete.getNum_sommet2() == sommetSource.getNum_sommet()) {
-                sommetAdjacent = arete.getNum_sommet1();
-                this.result.put(sommetAdjacent, arete.getTps());
-            }
-            if ((arete.getNum_sommet1() == destination.getNum_sommet() || arete.getNum_sommet2() == destination.getNum_sommet())) {
-                System.out.println("DERNIER TOUR -> ILS SONT VOISINS.");
-                this.result.put(destination.getNum_sommet(), arete.getTps());
-                return this.result;
-            }
-        }
-        Set<Integer> set_iterator = this.result.keySet();
-        ArrayList<Sommet> sommetsFinaux = new ArrayList<>();
-        Iterator<Integer> it = set_iterator.iterator();
-
-        if (!this.result.containsKey(destination.getNum_sommet())) {
-            while (it.hasNext()) {
-                int i = it.next();
-                for (Sommet sommet : voisins) {
-                    if (sommet.getNum_sommet() == i && !sommet.isSommetVisite()) {
-                        sommetsFinaux.add(sommet);
-                    }
+    public int dikjstra(Sommet sommetSource, Sommet destination) {
+//        int sommetAdjacent = 0;
+//        int distance = 0;
+//        sommetSource.setSommetVisite(true);
+//        ArrayList<Sommet> voisins = sommetsAdjacencents(sommetSource);
+//        ArrayList<Arete> voisines = aretesAdjacentes(sommetSource);
+//        System.out.println(voisines);
+//
+//        //On retourne result lorsque les deux sommets sont voisins
+//        for (Arete arete : voisines) {
+//            if (arete.getNum_sommet1() == sommetSource.getNum_sommet()) {
+//                sommetAdjacent = arete.getNum_sommet2();
+//                this.result.put(sommetAdjacent, arete.getTps());
+//            }
+//            if (arete.getNum_sommet2() == sommetSource.getNum_sommet()) {
+//                sommetAdjacent = arete.getNum_sommet1();
+//                this.result.put(sommetAdjacent, arete.getTps());
+//            }
+//            if ((arete.getNum_sommet1() == destination.getNum_sommet() || arete.getNum_sommet2() == destination.getNum_sommet())) {
+//                System.out.println("DERNIER TOUR -> ILS SONT VOISINS.");
+//                this.result.put(destination.getNum_sommet(), arete.getTps());
+//                return this.result;
+//            }
+//        }
+//        Set<Integer> set_iterator = this.result.keySet();
+//        ArrayList<Sommet> sommetsFinaux = new ArrayList<>();
+//        Iterator<Integer> it = set_iterator.iterator();
+//
+//        if (!this.result.containsKey(destination.getNum_sommet())) {
+//            while (it.hasNext()) {
+//                int i = it.next();
+//                for (Sommet sommet : voisins) {
+//                    if (sommet.getNum_sommet() == i && !sommet.isSommetVisite()) {
+//                        sommetsFinaux.add(sommet);
+//                    }
+//                }
+//            }
+//            for (Sommet sommet : sommetsFinaux) {
+//                    System.out.println(sommet);
+//                    dikjstra(sommet, destination);
+//            }
+//        }
+//        return this.result;
+//        const distances = new Array(graph.sommets.length);
+//        distances.fill(Number.MAX_SAFE_INTEGER);
+//        const sommetsVisites = new Array(graph.sommets.length);
+//        sommetsVisites.fill(false);
+//        let predecesseurs = new Array(graph.sommets.length);
+//        predecesseurs.fill(null);
+//        distances[source] = 0;
+//        let sommetActuel = source;
+//        while (sommetActuel != arrivee) {
+//            sommetsVisites[sommetActuel] = true;
+//            graph.sommets[sommetActuel].successeurs.forEach((voisin) => {
+//            const distance = graph.getDistance(sommetActuel, voisin);
+//            if (distance + distances[sommetActuel] < distances[voisin]) {
+//                distances[voisin] = distance + distances[sommetActuel];
+//                predecesseurs[voisin] = sommetActuel;
+//            }
+//        });
+//                let min = Number.MAX_SAFE_INTEGER;
+//                graph.sommets.forEach((index) => {
+//                if (!sommetsVisites[index.numSommet] && distances[index.numSommet] < min) {
+//                    min = distances[index.numSommet];
+//                    sommetActuel = index.numSommet;
+//                }
+//        });
+//            }
+//        const plusCourtChemin = [];
+//        let sommet = arrivee;
+//        while (sommet != source) {
+//            plusCourtChemin.push(parseInt(sommet));
+//            sommet = predecesseurs[sommet];
+//        }
+//        plusCourtChemin.push(parseInt(source));
+//        plusCourtChemin.reverse();
+//        return plusCourtChemin;
+//        };
+        int distance = 0;
+        int branchement = sommetSource.getBranchement();
+        int branchementDestination = destination.getBranchement();
+        int[] distances = new int[this.getSommets().size()];
+        Arrays.fill(distances, Integer.MAX_VALUE);
+        ArrayList<Sommet> sommetsVisites = new ArrayList<Sommet>();
+        ArrayList<Sommet> predecesseurs = new ArrayList<Sommet>();
+        distances[sommetSource.getNum_sommet()] = 0;
+        Sommet sommetActuel = sommetSource;
+        while (sommetActuel.getNum_sommet() != destination.getNum_sommet()) {
+            sommetsVisites.add(sommetActuel);
+            for (Sommet voisins : sommetsAdjacencents(sommetActuel)) {
+                distance = distanceSommetsVoisins(sommetActuel,voisins);
+                if(distance + distances[sommetActuel.getNum_sommet()] < distances[voisins.getNum_sommet()] && (voisins.getBranchement() == branchement || voisins.getBranchement()==branchementDestination)) {
+                    distances[voisins.getNum_sommet()] = distance + distances[sommetActuel.getNum_sommet()];
+                    predecesseurs.add(sommetActuel);
                 }
             }
-            for (Sommet sommet : sommetsFinaux) {
-                    System.out.println(sommet);
-                    dikjstra(sommet, destination);
+            int min = Integer.MAX_VALUE;
+            for (Sommet sommet : this.getSommets()) {
+                if(!sommetsVisites.contains(sommet) && distances[sommet.getNum_sommet()] < min) {
+                    min = distances[sommet.getNum_sommet()];
+                    sommetActuel = sommet;
+                }
             }
         }
-        return this.result;
+        System.out.println(predecesseurs);
+        Collections.reverse(predecesseurs);
+        System.out.println(predecesseurs);
+        int plusCourtChemin = 0;
+        Sommet temp = destination;
+        for (Sommet sommet : predecesseurs) {
+            System.out.println(temp);
+            plusCourtChemin += distanceSommetsVoisins(temp,sommet);
+            System.out.println(plusCourtChemin);
+            temp = sommet;
+        }
+        return plusCourtChemin;
     }
 }
 
