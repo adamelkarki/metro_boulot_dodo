@@ -1,5 +1,4 @@
 package app.modele;
-
 import java.util.ArrayList;
 
 import static java.util.Collections.sort;
@@ -20,7 +19,6 @@ public class Arete implements Comparable<Arete>{
         this.num_sommet2 = s2;
         this.tps = t;
     }
-
 
     public Arete(int s1, int s2)
     {
@@ -68,7 +66,6 @@ public class Arete implements Comparable<Arete>{
 
     @Override
     public String toString() {
-//        return "Pour aller de " + s1.getNom_sommet() + " à " + s2.getNom_sommet() + " il vous faudra " + this.getTps();
         return this.getNum_sommet1() + " " + this.getNum_sommet2() + " " + this.getTps();
     }
 

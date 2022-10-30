@@ -1,19 +1,14 @@
 package app.modele;
 
-import javax.print.attribute.standard.PresentationDirection;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
-
-import static java.util.Collections.replaceAll;
-import static java.util.Collections.sort;
 
 public class Graphe {
 
     private ArrayList<Sommet> sommets;
-    private Map<Integer, Integer> result = new HashMap<>();
     private ArrayList<Arete> aretes;
     private File file;
+    private int acpm = 0;
 
 
     public Graphe() throws IOException {
@@ -29,6 +24,14 @@ public class Graphe {
 
     public ArrayList<Sommet> getSommets() {
         return sommets;
+    }
+
+    public int getAcpm() {
+        return acpm;
+    }
+
+    public void setAcpm(int acpm) {
+        this.acpm = acpm;
     }
 
     public void setSommets(ArrayList<Sommet> sommets) {
@@ -76,16 +79,7 @@ public class Graphe {
                 numero_ligne = regex[1].substring(0, regex[1].length() - 1);
                 terminus = Boolean.parseBoolean(regex[2]);
 
-                //System.out.println(branchement);
-                //System.out.println(line);
-                //System.out.println(line);
-                //System.out.println(num_sommet);
-                //System.out.println(nom_station);
-                //System.out.println(numero_ligne);
-                //System.out.println(terminus);
-
                 Sommet s = new Sommet(num_sommet, nom_station, numero_ligne, terminus, branchement);
-//                System.out.println(s.toString());
                 this.sommets.add(s);
             }
             if (line.startsWith("E ")) {
@@ -95,12 +89,7 @@ public class Graphe {
                 sommetB = Integer.parseInt(regex[2]);
                 tps = Integer.parseInt(regex[3]);
 
-                //System.out.println(sommetA);
-                //System.out.println(sommetB);
-                //System.out.println(tps);
-
                 Arete a = new Arete(sommetA, sommetB, tps);
-//                System.out.println(a.toString());
                 this.aretes.add(a);
 
             }
@@ -125,7 +114,6 @@ public class Graphe {
                 }
             }
         }
-//        System.out.println(sommetsAdjacents);
         return sommetsAdjacents;
     }
 
@@ -136,14 +124,12 @@ public class Graphe {
                 aretesAdjacentes.add(a);
             }
         }
-//        System.out.println(aretesAdjacentes);
         return aretesAdjacentes;
     }
 
     public boolean connexite(Sommet s1) {
         s1.setSommetVisite(true);
         ArrayList<Sommet> sommetsAdjacents = sommetsAdjacencents(s1);
-        //System.out.println(sommetsAdjacents);
 
         for (Sommet next : sommetsAdjacents) {
             if (next.isSommetVisite() == false) {
@@ -153,61 +139,95 @@ public class Graphe {
         return true;
     }
 
-    public int kruskal() {
+    public Arete distanceSommetsVoisins (Sommet sommet1, Sommet sommet2) {
+        int distance = Integer.MAX_VALUE;
+        Arete returnArete = null;
+        for (Arete arete : this.getAretes()) {
+            if((arete.getNum_sommet1() == sommet1.getNum_sommet() && arete.getNum_sommet2() == sommet2.getNum_sommet()) || (arete.getNum_sommet2() == sommet1.getNum_sommet() && arete.getNum_sommet1() == sommet2.getNum_sommet())) {
+                returnArete = arete;
+
+            }
+        }
+        return returnArete;
+    }
+
+    public ArrayList<Arete> kruskal() {
         Collections.sort(this.aretes);
         TreeMap<Integer, Integer> sommetsVisites = new TreeMap<>();
-        int acpm = 0;
+        ArrayList<Arete> areteArrayList = new ArrayList<>();
+        int poidsDeLarbre = 0;
 
         for (Arete arete : this.getAretes()) {
-            if ((!sommetsVisites.containsKey(arete.getNum_sommet1()) && !sommetsVisites.containsValue(arete.getNum_sommet2())) || (!sommetsVisites.containsKey(arete.getNum_sommet2()) && !sommetsVisites.containsValue(arete.getNum_sommet1()))) {
+            if ((!sommetsVisites.containsKey(arete.getNum_sommet1()) || !sommetsVisites.containsValue(arete.getNum_sommet2())) &&
+                    (!sommetsVisites.containsKey(arete.getNum_sommet2()) || !sommetsVisites.containsValue(arete.getNum_sommet1()))) {
                 sommetsVisites.put(arete.getNum_sommet1(), arete.getNum_sommet2());
-                acpm += arete.getTps();
+                poidsDeLarbre += arete.getTps();
+                areteArrayList.add(arete);
+
             }
         }
-        return acpm;
+        this.acpm = poidsDeLarbre;
+        return areteArrayList;
     }
 
-
-
-    public Map<Integer, Integer> dikjstra(Sommet sommetSource, Sommet destination) {
-        int sommetAdjacent = 0;
-        sommetSource.setSommetVisite(true);
-        ArrayList<Sommet> voisins = sommetsAdjacencents(sommetSource);
-        ArrayList<Arete> voisines = aretesAdjacentes(sommetSource);
-
-        //On retourne result lorsque les deux sommets sont voisins
-        for (Arete arete : voisines) {
-            if (arete.getNum_sommet1() == sommetSource.getNum_sommet()) {
-                sommetAdjacent = arete.getNum_sommet2();
-                this.result.put(sommetAdjacent, arete.getTps());
-            }
-            if (arete.getNum_sommet2() == sommetSource.getNum_sommet()) {
-                sommetAdjacent = arete.getNum_sommet1();
-                this.result.put(sommetAdjacent, arete.getTps());
-            }
-            if ((arete.getNum_sommet1() == destination.getNum_sommet() || arete.getNum_sommet2() == destination.getNum_sommet())) {
-                System.out.println("DERNIER TOUR -> ILS SONT VOISINS.");
-                this.result.put(destination.getNum_sommet(), arete.getTps());
-                return this.result;
-            }
+    public int dijkstra(Sommet s, Sommet s2) {
+        TreeMap<Integer, Integer> distance = new TreeMap<>();
+        ArrayList<Sommet> visited = new ArrayList<>();
+        ArrayList<Sommet> previous = new ArrayList<>();
+        TreeMap<Integer, ArrayList> path = new TreeMap<>();
+        for (Sommet sommet : this.getSommets()) {
+            distance.put(sommet.getNum_sommet(), Integer.MAX_VALUE);
         }
-        Set<Integer> set_iterator = this.result.keySet();
-        ArrayList<Sommet> sommetsFinaux = new ArrayList<>();
-        Iterator<Integer> it = set_iterator.iterator();
-
-        if (!this.result.containsKey(destination.getNum_sommet())) {
-            while (it.hasNext()) {
-                int i = it.next();
-                for (Sommet sommet : voisins) {
-                    if (sommet.getNum_sommet() == i && !sommet.isSommetVisite()) {
-                        sommetsFinaux.add(sommet);
-                    }
+        distance.put(s.getNum_sommet(), 0);
+        for (Sommet sommet : this.getSommets()) {
+            previous.add(null);
+            path.put(sommet.getNum_sommet(), new ArrayList<Sommet>() {
+            });
+        }
+        while (visited.size() != this.getSommets().size()) {
+            int min = Integer.MAX_VALUE;
+            Sommet sommetMin = null;
+            for (Sommet sommet : this.getSommets()) {
+                if (distance.get(sommet.getNum_sommet()) < min && !visited.contains(sommet)) {
+                    min = distance.get(sommet.getNum_sommet());
+                    sommetMin = sommet;
                 }
             }
-            for (Sommet sommet : sommetsFinaux) {
-                dikjstra(sommet, destination);
+            visited.add(sommetMin);
+            for (Sommet sommet : sommetsAdjacencents(sommetMin)) {
+                Arete areteDis =  distanceSommetsVoisins(sommetMin, sommet);
+                if (distance.get(sommet.getNum_sommet()) > distance.get(sommetMin.getNum_sommet()) + areteDis.getTps()) {
+                    distance.put(sommet.getNum_sommet(), distance.get(sommetMin.getNum_sommet()) + areteDis.getTps());
+                    previous.set(sommet.getNum_sommet(), sommetMin);
+                    sommet.setPrevoius(sommetMin);
+                }
             }
         }
-        return this.result;
+        return distance.get(s2.getNum_sommet());
     }
+
+    public ArrayList<Sommet> getPath(Sommet s, Sommet s2){
+        ArrayList<Sommet> pathTo = new ArrayList<>();
+        while (s2.getPrevoius() != null) {
+            pathTo.add(s2);
+            s2 = s2.getPrevoius();
+        }
+        pathTo.add(s);
+        Collections.reverse(pathTo);
+        return pathTo;
+    }
+
+    public ArrayList<Sommet> getShortestPath(Sommet source, Sommet destination, ArrayList<Sommet> previous) {
+        ArrayList<Sommet> path = new ArrayList<>();
+        Sommet current = destination;
+        while (current != source) {
+            path.add(current);
+            current = previous.get(current.getNum_sommet());
+        }
+        path.add(source);
+        Collections.reverse(path);
+        return path;
+    }
+
+
 }

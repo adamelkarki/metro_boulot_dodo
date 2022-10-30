@@ -11,6 +11,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +27,9 @@ public class App extends JPanel {
     private Vue_sommet source;
     private Vue_sommet destination;
     private JTextArea textArea;
+    private JToggleButton display_kruskal;
+    private Boolean active_kruskal = false;
+    private JLabel label_acpm;
 
     public App() {
 
@@ -32,6 +37,9 @@ public class App extends JPanel {
             this.vue_graphe = new Vue_graphe();
             textArea = new JTextArea();
             textArea.setEditable(false);
+            label_acpm = new JLabel();
+
+            display_kruskal = new JToggleButton("Kruskal");
 
             this.background = ImageIO.read(new File("src/metrof_r.png"));
 
@@ -40,71 +48,108 @@ public class App extends JPanel {
 
         }
     }
-/*
-    @Override
-    public void repaint() {
-        super.repaint();
-        System.out.println("test");
 
-    }
-*/
 
     public void update(Graphics g, Vue_sommet src, Vue_sommet dest) {
         super.update(g);
-        System.out.println("UPDATE");
+        textArea.repaint();
         Graphics2D g2 = (Graphics2D) g;
 
+        if(!active_kruskal && display_kruskal.isSelected()) {
+            ArrayList<Arete> kruskal_res = new ArrayList<>();
+            kruskal_res = this.vue_graphe.getGraphe().kruskal();
 
-        if(src != null){
-            this.source = src;
-
-        }
-        if(this.source != null){
-            g2.setColor(Color.BLACK);
-            g2.fillOval(this.source.getCoorX()-4, this.source.getCoorY()-4, 20, 20);
-        }
-
-        if(dest != null){
-            this.destination = dest;
-            g2.setColor(Color.BLACK);
-            g2.fillOval(this.destination.getCoorX()-4, this.destination.getCoorY()-4, 20, 20);
-        }
-
-        if(this.destination!=null){
-            g2.setColor(Color.BLACK);
-            g2.fillOval(this.destination.getCoorX()-4, this.destination.getCoorY()-4, 15, 15);
-        }
-
-        if(this.source != null && this.destination != null){
             ArrayList<Sommet> sommets = new ArrayList<>();
-            Sommet som_source = this.vue_graphe.getGraphe().getSommets().stream().filter(s -> s.getNom_sommet().equals(this.source.getNom() + " ")).findFirst().get();
-            Sommet som_dest = this.vue_graphe.getGraphe().getSommets().stream().filter(s -> s.getNom_sommet().equals(this.destination.getNom() + " ")).findFirst().get();
+            label_acpm.setText("ACPM : " +Integer.toString(vue_graphe.getGraphe().getAcpm()));
+            System.out.println("ACPM = " + vue_graphe.getGraphe().getAcpm());
 
-            Map<Integer, Integer> map = this.vue_graphe.getGraphe().dikjstra(som_source, som_dest);
-            for(Integer i : map.keySet()){
-                Sommet som = this.vue_graphe.getGraphe().getSommets().stream().filter(s -> s.getNum_sommet() == i).findFirst().get();
-                sommets.add(som);
-                Vue_sommet vue = this.vue_graphe.getVue_sommets().stream().filter(v -> (v.getNom() +" ").equals(som.getNom_sommet())).findFirst().get();
-                g2.fillOval(vue.getCoorX()-4, vue.getCoorY()-4, 7, 7);
+            for(Arete arete : kruskal_res){
+                Sommet a = vue_graphe.getGraphe().getSommets().get(arete.getNum_sommet1());
+                Sommet b = vue_graphe.getGraphe().getSommets().get(arete.getNum_sommet2());
+                System.out.println(a.getNom_sommet());
+                System.out.println(b.getNom_sommet());
+                sommets.add(a);
+                sommets.add(b);
 
+                Vue_sommet vueA = vue_graphe.getVue_sommets().stream().filter(s -> (s.getNom() +" ").equals(a.getNom_sommet())).findFirst().get();
+                Vue_sommet vueB = vue_graphe.getVue_sommets().stream().filter(s -> (s.getNom() +" ").equals(b.getNom_sommet())).findFirst().get();
 
+                g2.fillOval(vueA.getCoorX() - 4, vueA.getCoorY() - 4, 7, 7);
+                g2.fillOval(vueB.getCoorX() - 4, vueB.getCoorY() - 4, 7, 7);
+            }
+            drawArete(g, sommets);
+        }else{
+            if (src != null) {
+                this.source = src;
 
-                //textArea.setText("\n"+ );
-
-
-                //this.textArea.setText("\n" + this.textArea.getText() + "\n"+vue.getNom() + "\n" + vue2.getNom());
+            }
+            if (this.source != null) {
+                g2.setColor(Color.BLACK);
+                g2.fillOval(this.source.getCoorX() - 4, this.source.getCoorY() - 4, 10, 10);
 
             }
 
-            drawArete(g, sommets);
+            if (dest != null) {
+                this.destination = dest;
+                g2.setColor(Color.BLACK);
+                g2.fillOval(this.destination.getCoorX() - 4, this.destination.getCoorY() - 4, 10, 10);
+            }
 
+            if (this.destination != null) {
+                g2.setColor(Color.BLACK);
+                g2.fillOval(this.destination.getCoorX() - 4, this.destination.getCoorY() - 4, 10, 10);
+            }
+
+            if (this.source != null && this.destination != null) {
+                ArrayList<Sommet> sommets = new ArrayList<>();
+                ArrayList<Sommet> chemin = new ArrayList<>();
+                float poids = 0;
+                String text=textArea.getText();
+                String words[]=text.split("\\s");
+
+                Sommet som_source = this.vue_graphe.getGraphe().getSommets().stream().filter(s -> s.getNom_sommet().equals(this.source.getNom() + " ")).findFirst().get();
+                Sommet som_dest = this.vue_graphe.getGraphe().getSommets().stream().filter(s -> s.getNom_sommet().equals(this.destination.getNom() + " ")).findFirst().get();
+                poids = vue_graphe.getGraphe().dijkstra(som_source, som_dest);
+                chemin = vue_graphe.getGraphe().getPath(som_source, som_dest);
+
+                float tpsDeTrajet = (float) poids/(float) 60;
+
+                String numLigne = "";
+                for(Sommet s : chemin){
+                    Vue_sommet vue = vue_graphe.getVue_sommets().stream().filter(v -> (v.getNom() + " ").equals(s.getNom_sommet())).findFirst().get();
+                    if(!s.getNum_ligne().equals(numLigne) && !numLigne.equals("")){
+                        numLigne = s.getNum_ligne();
+                        textArea.append("Changez de ligne a la station " + s.getNom_sommet() + ", prenez la ligne " + s.getNum_ligne() +"\n");
+                        System.out.println("Changez de ligne a la station " + s.getNom_sommet() + ", prenez la ligne " + s.getNum_ligne() +"\n");
+                    }else if(!s.getNum_ligne().equals(numLigne) && numLigne.equals("")){
+                        numLigne = s.getNum_ligne();
+                        textArea.append("Prenez la ligne " + s.getNum_ligne() + " de la station " + s.getNom_sommet() +"\n");
+                        System.out.println("Prenez la ligne " + s.getNum_ligne() + " de la station " + s.getNom_sommet() +"\n");
+                    }
+                    else if(s.getNum_ligne().equals(numLigne)){
+                        numLigne = s.getNum_ligne();
+                        textArea.append("Station  : "  + s.getNom_sommet() + " (" + s.getNum_ligne() + ")" +"\n");
+                        System.out.println("Station  : "  + s.getNom_sommet() + " (" + s.getNum_ligne() + ")" +"\n");
+                    }
+                    g2.fillOval(vue.getCoorX()-4, vue.getCoorY()-4, 7, 7);
+                }
+
+                if(poids < 60){
+                    textArea.append("\n" + "Vous attendrez la destination dans " + poids + " secondes.");
+                    System.out.println("\n" + "Vous attendrez la destination dans " + poids + " secondes.");
+                }else{
+
+                    textArea.append("\n" + "Vous attendrez la destination dans " +  String.format("%.2f", tpsDeTrajet)  + " minutes.");
+                    System.out.println("\n" + "Vous attendrez la destination dans " + String.format("%.2f", tpsDeTrajet)  + " minutes.");
+
+                }
+                drawArete(g, chemin);
+            }
         }
 
 
-
-
-
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -112,41 +157,15 @@ public class App extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F);
         g2.setComposite(ac);
-        g.drawImage(background,0,0,987,952, this);
+        g.drawImage(background, 0, 0, 987, 952, this);
 
-         ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F);
+        ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F);
         g2.setComposite(ac);
 
-/*
-        for (Vue_sommet s : vue_graphe.getVue_sommets()) {
-
-            g2.fillOval(s.getCoorX()-4, s.getCoorY()-4, 7, 7);
-        }
-
- */
         g2.setStroke(new BasicStroke(2));
-      //  drawArete(g2);
-
-
     }
 
     public void drawArete(Graphics g, ArrayList<Sommet> sommets){
-
-        /*for(Arete arete : this.vue_graphe.getGraphe().getAretes()){
-
-
-            Sommet a = this.vue_graphe.getGraphe().getSommets().get(arete.getNum_sommet1());
-            Sommet b = this.vue_graphe.getGraphe().getSommets().get(arete.getNum_sommet2());
-
-            Vue_sommet vue = this.vue_graphe.getVue_sommets().stream().filter(s -> (s.getNom()+" ").equals(a.getNom_sommet())).findAny().get();
-
-            Vue_sommet vue2 = this.vue_graphe.getVue_sommets().stream().filter(s -> (s.getNom()+" ").equals(b.getNom_sommet())).findFirst().get();
-
-            g.setColor(chooseColor(a));
-
-            g.drawLine(vue.getCoorX(),vue.getCoorY(),vue2.getCoorX(),vue2.getCoorY());
-
-        }*/
 
         for(Arete arete : this.vue_graphe.getGraphe().getAretes()){
             LinkedHashSet<String> display = new LinkedHashSet<>();
@@ -154,37 +173,14 @@ public class App extends JPanel {
             try {
                 Sommet a = sommets.stream().filter(s -> s.getNum_sommet() == arete.getNum_sommet1()).findFirst().get();
                 Sommet b = sommets.stream().filter(s -> s.getNum_sommet() == arete.getNum_sommet2()).findFirst().get();
-
-
-                display.add(a.getNom_sommet());
-
-
-
-
                 Vue_sommet vue = this.vue_graphe.getVue_sommets().stream().filter(s -> (s.getNom() + " ").equals(a.getNom_sommet())).findAny().get();
-
                 Vue_sommet vue2 = this.vue_graphe.getVue_sommets().stream().filter(s -> (s.getNom() + " ").equals(b.getNom_sommet())).findFirst().get();
-
                 g.setColor(chooseColor(a));
-
-
                 g.drawLine(vue.getCoorX(), vue.getCoorY(), vue2.getCoorX(), vue2.getCoorY());
-
 
             }catch (Exception e){
 
             }
-
-
-            String text=textArea.getText();
-            String words[]=text.split("\\s");
-
-            for(String str : display){
-                textArea.append("       " + str + "\n");
-                System.out.println(str);
-            }
-
-
         }
 
 
@@ -213,28 +209,11 @@ public class App extends JPanel {
     }
 
     private static void createAndShowGui() {
-/*
-        App app = new App();
-        JPanel panel = new JPanel();
-        JFrame frame = new JFrame("Graph");
-        app.setBorder(new LineBorder(Color.BLACK));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        panel.add(app, BorderLayout.CENTER);
-        frame.add(panel);
-        panel.setSize(950, 1000);
-        frame.pack();
-        frame.add(app, BorderLayout.CENTER);
-        frame.setSize(1500, 1000);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-*/
         JFrame frame = new JFrame("Graph");
 
         JSplitPane splitPane;
         App app;
         JPanel bottomPanel;
-        JScrollPane scrollPane;
-        JTextArea textArea;
 
         JPanel inputPanel;
         app = new App();
@@ -250,6 +229,23 @@ public class App extends JPanel {
         list_combobox.addAll(li);
 
 
+        JButton jButton = new JButton("Reset");
+
+
+        app.display_kruskal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(app.active_kruskal == false) {
+                    app.repaint();
+                    app.update(frame.getGraphics(),null,null);
+                    app.active_kruskal = true;
+                }else {
+                    app.repaint();
+                    app.label_acpm.setText("ACPM : " + Integer.toString(app.vue_graphe.getGraphe().getAcpm()));
+                    app.active_kruskal = false;
+                }
+            }
+        });
 
         //trier par odre alphabetique
         Collections.sort(list_combobox);
@@ -261,11 +257,9 @@ public class App extends JPanel {
         comboBox_src.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 String value = comboBox_src.getSelectedItem().toString();
-                System.out.println("Station source choose : "+ value);
                 Vue_sommet vue_sommet = app.vue_graphe.getVue_sommets().stream().filter(s -> s.getNom().equals(value)).findFirst().get();
-                System.out.println(vue_sommet.getNom());
-                // set la source
                 app.update(frame.getGraphics(), vue_sommet, null);
             }
         });
@@ -275,16 +269,26 @@ public class App extends JPanel {
         comboBox_dest.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 String value = comboBox_dest.getSelectedItem().toString();
-                System.out.println("Station destination choose : "+ value);
                 Vue_sommet vue_sommet = app.vue_graphe.getVue_sommets().stream().filter(s -> s.getNom().equals(value)).findFirst().get();
-                System.out.println(vue_sommet.getNom());
-                // set la dest
                 app.update(frame.getGraphics(), null, vue_sommet);
+                comboBox_src.setEnabled(false);
+                comboBox_dest.setEnabled(false);
+
             }
         });
 
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                app.repaint();
+                app.textArea.setText("");
+                comboBox_dest.setEnabled(true);
+                comboBox_src.setEnabled(true);
 
+            }
+        });
 
         splitPane = new JSplitPane();
 
@@ -292,10 +296,6 @@ public class App extends JPanel {
 
         bottomPanel = new JPanel();
         bottomPanel.setBorder(new LineBorder(Color.blue));
-
-  //      scrollPane = new JScrollPane();
-     //   scrollPane.setBorder(new LineBorder(Color.green));
-
 
         inputPanel = new JPanel();
 
@@ -308,19 +308,24 @@ public class App extends JPanel {
         splitPane.setLeftComponent(app);
         splitPane.setRightComponent(bottomPanel);
 
-        //bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
         bottomPanel.add(inputPanel);
         bottomPanel.add(inputPanel, BorderLayout.NORTH);
 
-        app.textArea.setPreferredSize(new Dimension(440, 500));
+        app.textArea.setPreferredSize(new Dimension(440, 800));
         app.textArea.setBorder(new LineBorder(Color.pink));
         bottomPanel.add(app.textArea, BorderLayout.SOUTH);
 
         inputPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 500));
-        //inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.X_AXIS));
         inputPanel.add(comboBox_src, BorderLayout.NORTH);
         inputPanel.add(comboBox_dest, BorderLayout.SOUTH);
 
+        app.display_kruskal.setPreferredSize(new Dimension(100,20));
+        bottomPanel.add(app.display_kruskal, BorderLayout.NORTH);
+        jButton.setPreferredSize(new Dimension(100,20));
+
+        bottomPanel.add(jButton);
+
+        bottomPanel.add(app.label_acpm);
 
         comboBox_src.setPreferredSize(new Dimension(220, 50));
         comboBox_dest.setPreferredSize(new Dimension(220, 50));
