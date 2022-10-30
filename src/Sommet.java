@@ -7,6 +7,9 @@ public class Sommet {
     private int branchement;
     private boolean sommetVisite = false;
 
+    private Sommet previousSommet = null;
+
+
     public boolean isSommetVisite() {
         return sommetVisite;
     }
@@ -75,4 +78,11 @@ public class Sommet {
         return getNom_sommet() + " " + getNum_sommet() + " " + getNum_ligne() + " " + isTerminus() + " " + getBranchement();
     }
 
+    public void setPrevoius(Sommet sommetMin) {
+        this.previousSommet = sommetMin;
+    }
+
+    public Sommet getPrevoius() {
+        return this.previousSommet;
+    }
 }

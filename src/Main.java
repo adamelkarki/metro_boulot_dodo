@@ -27,7 +27,7 @@ public class Main {
 //        System.out.println(g.sommetsAdjacencents(PorteDeChoisy));
 //        System.out.println(g.sommetsAdjacencents(s1));
 //        System.out.println(g.sommetsAdjacencents(PierreEtMarieCurie));
-         g.dijkstra(Mairie_DIvry);
+         g.dijkstra(Mairie_DIvry, g.getSommets().get(175));
 //        System.out.println(g.distanceSommetsVoisins(Mairie_DIvry,PierreEtMarieCurie));
 
     }
