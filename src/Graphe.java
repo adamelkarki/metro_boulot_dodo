@@ -177,7 +177,7 @@ public class Graphe {
     }
 
     //dikjstra algorithm from a station to another
-    public void dijkstra(Sommet s, Sommet s2) {
+    public int dijkstra(Sommet s, Sommet s2) {
         //create a tree map to store the distance from the source to each vertex
         TreeMap<Integer, Integer> distance = new TreeMap<>();
         //create an array with visited vertices
@@ -225,16 +225,20 @@ public class Graphe {
         //for (Sommet sommet : this.getSommets()) {
         //    System.out.println("Distance from " + s.getNum_sommet() + " to " + sommet.getNum_sommet() + " is " + distance.get(sommet.getNum_sommet()));
         //}
+        return distance.get(s2.getNum_sommet());
+
+    }
+
+    //getpath from a station to another
+    public ArrayList<Sommet> getPath(Sommet s, Sommet s2){
         ArrayList<Sommet> pathTo = new ArrayList<>();
         while (s2.getPrevoius() != null) {
             pathTo.add(s2);
             s2 = s2.getPrevoius();
         }
         pathTo.add(s);
-        System.out.println(distance);
         Collections.reverse(pathTo);
-        System.out.println(pathTo);
-
+        return pathTo;
     }
 
 
