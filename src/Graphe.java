@@ -177,7 +177,7 @@ public class Graphe {
     }
 
     //dikjstra algorithm from a station to another
-    public void dijkstra(Sommet s) {
+    public void dijkstra(Sommet s, Sommet s2) {
         //create a tree map to store the distance from the source to each vertex
         TreeMap<Integer, Integer> distance = new TreeMap<>();
         //create an array with visited vertices
@@ -217,17 +217,23 @@ public class Graphe {
                 if (distance.get(sommet.getNum_sommet()) > distance.get(sommetMin.getNum_sommet()) + areteDis.getTps()) {
                     distance.put(sommet.getNum_sommet(), distance.get(sommetMin.getNum_sommet()) + areteDis.getTps());
                     previous.set(sommet.getNum_sommet(), sommetMin);
-                   // ArrayList pathSommet = path.get(sommetMin.getNum_sommet());
-                  //  pathSommet.add(areteDis);
-                    path.put(sommet.getNum_sommet(),previous);
+                    sommet.setPrevoius(sommetMin);
                 }
             }
         }
         //print the distance from the source to each vertex
-        for (Sommet sommet : this.getSommets()) {
-            System.out.println("Distance from " + s.getNum_sommet() + " to " + sommet.getNum_sommet() + " is " + distance.get(sommet.getNum_sommet()));
+        //for (Sommet sommet : this.getSommets()) {
+        //    System.out.println("Distance from " + s.getNum_sommet() + " to " + sommet.getNum_sommet() + " is " + distance.get(sommet.getNum_sommet()));
+        //}
+        ArrayList<Sommet> pathTo = new ArrayList<>();
+        while (s2.getPrevoius() != null) {
+            pathTo.add(s2);
+            s2 = s2.getPrevoius();
         }
-        System.out.println(path.get(161));
+        pathTo.add(s);
+        System.out.println(distance);
+        Collections.reverse(pathTo);
+        System.out.println(pathTo);
 
     }
 
