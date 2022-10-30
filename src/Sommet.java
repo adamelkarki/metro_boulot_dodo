@@ -74,4 +74,5 @@ public class Sommet {
     public String toString() {
         return getNom_sommet() + " " + getNum_sommet() + " " + getNum_ligne() + " " + isTerminus() + " " + getBranchement();
     }
+
 }

@@ -146,14 +146,16 @@ public class Graphe {
         return true;
     }
 
-    public int distanceSommetsVoisins (Sommet sommet1, Sommet sommet2) {
-        int distance = 0;
+    public Arete distanceSommetsVoisins (Sommet sommet1, Sommet sommet2) {
+        int distance = Integer.MAX_VALUE;
+        Arete returnArete = null;
         for (Arete arete : this.getAretes()) {
             if((arete.getNum_sommet1() == sommet1.getNum_sommet() && arete.getNum_sommet2() == sommet2.getNum_sommet()) || (arete.getNum_sommet2() == sommet1.getNum_sommet() && arete.getNum_sommet1() == sommet2.getNum_sommet())) {
-                distance = arete.getTps();
+                returnArete = arete;
+
             }
         }
-        return distance;
+        return returnArete;
     }
 
     public ArrayList<Arete> kruskal() {
@@ -174,122 +176,76 @@ public class Graphe {
         return areteArrayList;
     }
 
-    public int dikjstra(Sommet sommetSource, Sommet destination) {
-//        int sommetAdjacent = 0;
-//        int distance = 0;
-//        sommetSource.setSommetVisite(true);
-//        ArrayList<Sommet> voisins = sommetsAdjacencents(sommetSource);
-//        ArrayList<Arete> voisines = aretesAdjacentes(sommetSource);
-//        System.out.println(voisines);
-//
-//        //On retourne result lorsque les deux sommets sont voisins
-//        for (Arete arete : voisines) {
-//            if (arete.getNum_sommet1() == sommetSource.getNum_sommet()) {
-//                sommetAdjacent = arete.getNum_sommet2();
-//                this.result.put(sommetAdjacent, arete.getTps());
-//            }
-//            if (arete.getNum_sommet2() == sommetSource.getNum_sommet()) {
-//                sommetAdjacent = arete.getNum_sommet1();
-//                this.result.put(sommetAdjacent, arete.getTps());
-//            }
-//            if ((arete.getNum_sommet1() == destination.getNum_sommet() || arete.getNum_sommet2() == destination.getNum_sommet())) {
-//                System.out.println("DERNIER TOUR -> ILS SONT VOISINS.");
-//                this.result.put(destination.getNum_sommet(), arete.getTps());
-//                return this.result;
-//            }
-//        }
-//        Set<Integer> set_iterator = this.result.keySet();
-//        ArrayList<Sommet> sommetsFinaux = new ArrayList<>();
-//        Iterator<Integer> it = set_iterator.iterator();
-//
-//        if (!this.result.containsKey(destination.getNum_sommet())) {
-//            while (it.hasNext()) {
-//                int i = it.next();
-//                for (Sommet sommet : voisins) {
-//                    if (sommet.getNum_sommet() == i && !sommet.isSommetVisite()) {
-//                        sommetsFinaux.add(sommet);
-//                    }
-//                }
-//            }
-//            for (Sommet sommet : sommetsFinaux) {
-//                    System.out.println(sommet);
-//                    dikjstra(sommet, destination);
-//            }
-//        }
-//        return this.result;
-//        const distances = new Array(graph.sommets.length);
-//        distances.fill(Number.MAX_SAFE_INTEGER);
-//        const sommetsVisites = new Array(graph.sommets.length);
-//        sommetsVisites.fill(false);
-//        let predecesseurs = new Array(graph.sommets.length);
-//        predecesseurs.fill(null);
-//        distances[source] = 0;
-//        let sommetActuel = source;
-//        while (sommetActuel != arrivee) {
-//            sommetsVisites[sommetActuel] = true;
-//            graph.sommets[sommetActuel].successeurs.forEach((voisin) => {
-//            const distance = graph.getDistance(sommetActuel, voisin);
-//            if (distance + distances[sommetActuel] < distances[voisin]) {
-//                distances[voisin] = distance + distances[sommetActuel];
-//                predecesseurs[voisin] = sommetActuel;
-//            }
-//        });
-//                let min = Number.MAX_SAFE_INTEGER;
-//                graph.sommets.forEach((index) => {
-//                if (!sommetsVisites[index.numSommet] && distances[index.numSommet] < min) {
-//                    min = distances[index.numSommet];
-//                    sommetActuel = index.numSommet;
-//                }
-//        });
-//            }
-//        const plusCourtChemin = [];
-//        let sommet = arrivee;
-//        while (sommet != source) {
-//            plusCourtChemin.push(parseInt(sommet));
-//            sommet = predecesseurs[sommet];
-//        }
-//        plusCourtChemin.push(parseInt(source));
-//        plusCourtChemin.reverse();
-//        return plusCourtChemin;
-//        };
-        int distance = 0;
-        int branchement = sommetSource.getBranchement();
-        int branchementDestination = destination.getBranchement();
-        int[] distances = new int[this.getSommets().size()];
-        Arrays.fill(distances, Integer.MAX_VALUE);
-        ArrayList<Sommet> sommetsVisites = new ArrayList<Sommet>();
-        ArrayList<Sommet> predecesseurs = new ArrayList<Sommet>();
-        distances[sommetSource.getNum_sommet()] = 0;
-        Sommet sommetActuel = sommetSource;
-        while (sommetActuel.getNum_sommet() != destination.getNum_sommet()) {
-            sommetsVisites.add(sommetActuel);
-            for (Sommet voisins : sommetsAdjacencents(sommetActuel)) {
-                distance = distanceSommetsVoisins(sommetActuel,voisins);
-                if(distance + distances[sommetActuel.getNum_sommet()] < distances[voisins.getNum_sommet()] && (voisins.getBranchement() == branchement || voisins.getBranchement()==branchementDestination)) {
-                    distances[voisins.getNum_sommet()] = distance + distances[sommetActuel.getNum_sommet()];
-                    predecesseurs.add(sommetActuel);
-                }
-            }
+    //dikjstra algorithm from a station to another
+    public void dijkstra(Sommet s) {
+        //create a tree map to store the distance from the source to each vertex
+        TreeMap<Integer, Integer> distance = new TreeMap<>();
+        //create an array with visited vertices
+        ArrayList<Sommet> visited = new ArrayList<>();
+        //create a tree map to store the previous vertex of each vertex
+        ArrayList<Sommet> previous = new ArrayList<>();
+        //create a tree map to store the path from the source to each vertex
+        TreeMap<Integer, ArrayList> path = new TreeMap<>();
+        //initialize the distance to infinity
+        for (Sommet sommet : this.getSommets()) {
+            distance.put(sommet.getNum_sommet(), Integer.MAX_VALUE);
+        }
+        //initialize the distance to 0 for the source
+        distance.put(s.getNum_sommet(), 0);
+        //initialize the previous vertex to null
+        for (Sommet sommet : this.getSommets()) {
+            previous.add(null);
+            path.put(sommet.getNum_sommet(), new ArrayList<>() {
+            });
+        }
+        //start algorithm
+        while (visited.size() != this.getSommets().size()) {
+            //find the vertex with the smallest distance
             int min = Integer.MAX_VALUE;
+            Sommet sommetMin = null;
             for (Sommet sommet : this.getSommets()) {
-                if(!sommetsVisites.contains(sommet) && distances[sommet.getNum_sommet()] < min) {
-                    min = distances[sommet.getNum_sommet()];
-                    sommetActuel = sommet;
+                if (distance.get(sommet.getNum_sommet()) < min && !visited.contains(sommet)) {
+                    min = distance.get(sommet.getNum_sommet());
+                    sommetMin = sommet;
+                }
+            }
+            //add the vertex to the visited array
+            visited.add(sommetMin);
+            //update the distance of the adjacent vertices
+            for (Sommet sommet : sommetsAdjacencents(sommetMin)) {
+                Arete areteDis =  distanceSommetsVoisins(sommetMin, sommet);
+                if (distance.get(sommet.getNum_sommet()) > distance.get(sommetMin.getNum_sommet()) + areteDis.getTps()) {
+                    distance.put(sommet.getNum_sommet(), distance.get(sommetMin.getNum_sommet()) + areteDis.getTps());
+                    previous.set(sommet.getNum_sommet(), sommetMin);
+                   // ArrayList pathSommet = path.get(sommetMin.getNum_sommet());
+                  //  pathSommet.add(areteDis);
+                    path.put(sommet.getNum_sommet(),previous);
                 }
             }
         }
-        System.out.println(predecesseurs);
-        Collections.reverse(predecesseurs);
-        System.out.println(predecesseurs);
-        int plusCourtChemin = 0;
-        Sommet temp = destination;
-        for (Sommet sommet : predecesseurs) {
-            System.out.println(temp);
-            plusCourtChemin += distanceSommetsVoisins(temp,sommet);
-            System.out.println(plusCourtChemin);
-            temp = sommet;
+        //print the distance from the source to each vertex
+        for (Sommet sommet : this.getSommets()) {
+            System.out.println("Distance from " + s.getNum_sommet() + " to " + sommet.getNum_sommet() + " is " + distance.get(sommet.getNum_sommet()));
         }
-        return plusCourtChemin;
+        System.out.println(path.get(161));
+
     }
+
+
+
+    // get the shortest path from the source to the destination with a previous array
+    public ArrayList<Sommet> getShortestPath(Sommet source, Sommet destination, ArrayList<Sommet> previous) {
+        ArrayList<Sommet> path = new ArrayList<>();
+        Sommet current = destination;
+        while (current != source) {
+            path.add(current);
+            current = previous.get(current.getNum_sommet());
+        }
+        path.add(source);
+        Collections.reverse(path);
+        return path;
+    }
+
+
 }
 
