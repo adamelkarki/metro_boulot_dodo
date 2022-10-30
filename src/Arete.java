@@ -65,7 +65,7 @@ public class Arete implements Comparable<Arete>{
 
     @Override
     public String toString() {
-//        return "Pour aller de " + s1.getNom_sommet() + " à " + s2.getNom_sommet() + " il vous faudra " + this.getTps();
+       // return "Pour aller de " + s1.getNom_sommet() + " à " + s2.getNom_sommet() + " il vous faudra " + this.getTps();
         return this.getNum_sommet1() + " " + this.getNum_sommet2() + " " + this.getTps();
     }
 
