@@ -163,14 +163,14 @@ public class Graphe {
         int poidsDeLarbre = 0;
 
         for (Arete arete : this.getAretes()) {
-            if ((!sommetsVisites.containsKey(arete.getNum_sommet1()) || !sommetsVisites.containsValue(arete.getNum_sommet2())) &&
-                    (!sommetsVisites.containsKey(arete.getNum_sommet2()) || !sommetsVisites.containsValue(arete.getNum_sommet1()))) {
+            if ((!sommetsVisites.containsKey(arete.getNum_sommet1()) && !sommetsVisites.containsValue(arete.getNum_sommet2())) ||
+                    (!sommetsVisites.containsKey(arete.getNum_sommet2()) && !sommetsVisites.containsValue(arete.getNum_sommet1()))) {
                 sommetsVisites.put(arete.getNum_sommet1(), arete.getNum_sommet2());
                 poidsDeLarbre += arete.getTps();
                 areteArrayList.add(arete);
             }
         }
-        System.out.println(sommetsVisites.get(259));
+        System.out.println(poidsDeLarbre);
         return areteArrayList;
     }
 
