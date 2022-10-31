@@ -2,21 +2,16 @@ package app.vue;
 
 import app.modele.Arete;
 import app.modele.Sommet;
-import sun.java2d.loops.DrawLine;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 
 public class App extends JPanel {
@@ -60,9 +55,6 @@ public class App extends JPanel {
             ArrayList<Sommet> sommets = new ArrayList<>();
             label_acpm.setText("ACPM : " +Integer.toString(vue_graphe.getGraphe().getAcpm()));
             System.out.println("ACPM = " + vue_graphe.getGraphe().getAcpm());
-            System.out.println(vue_graphe.getGraphe().getSommets().size());
-            System.out.println(kruskal_res.size());
-
 
             for(Arete arete : kruskal_res){
                 Sommet a = vue_graphe.getGraphe().getSommets().get(arete.getNum_sommet1());
@@ -250,7 +242,6 @@ public class App extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(app.active_kruskal == false) {
-                    ////app.repaint();
                     app.update(frame.getGraphics(),null,null);
                     app.active_kruskal = true;
                 }else {
@@ -306,11 +297,7 @@ public class App extends JPanel {
 
         splitPane = new JSplitPane();
 
-        // app.setBorder(new LineBorder(Color.BLACK));
-
         bottomPanel = new JPanel();
-        //    bottomPanel.setBorder(new LineBorder(Color.blue));
-
         inputPanel = new JPanel();
 
         frame.setPreferredSize(new Dimension(1500, 1005));
