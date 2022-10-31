@@ -62,12 +62,13 @@ public class App extends JPanel {
             ArrayList<Sommet> sommets = new ArrayList<>();
             label_acpm.setText("ACPM : " +Integer.toString(vue_graphe.getGraphe().getAcpm()));
             System.out.println("ACPM = " + vue_graphe.getGraphe().getAcpm());
+            System.out.println(vue_graphe.getGraphe().getSommets().size());
+            System.out.println(kruskal_res.size());
+
 
             for(Arete arete : kruskal_res){
                 Sommet a = vue_graphe.getGraphe().getSommets().get(arete.getNum_sommet1());
                 Sommet b = vue_graphe.getGraphe().getSommets().get(arete.getNum_sommet2());
-                System.out.println(a.getNom_sommet());
-                System.out.println(b.getNom_sommet());
                 sommets.add(a);
                 sommets.add(b);
 
@@ -77,7 +78,7 @@ public class App extends JPanel {
                 g2.fillOval(vueA.getCoorX() - 4, vueA.getCoorY() - 4, 7, 7);
                 g2.fillOval(vueB.getCoorX() - 4, vueB.getCoorY() - 4, 7, 7);
             }
-            drawArete(g, sommets);
+            drawKruskal(g, kruskal_res);
         }else{
             if (src != null) {
                 this.source = src;
@@ -182,8 +183,23 @@ public class App extends JPanel {
 
             }
         }
+    }
 
+    public void drawKruskal(Graphics g, ArrayList<Arete> aretes){
+        for(Arete arete : aretes){
 
+            try {
+                Sommet a = vue_graphe.getGraphe().getSommets().stream().filter(s -> s.getNum_sommet() == arete.getNum_sommet1()).findFirst().get();
+                Sommet b = vue_graphe.getGraphe().getSommets().stream().filter(s -> s.getNum_sommet() == arete.getNum_sommet2()).findFirst().get();
+                Vue_sommet vue = this.vue_graphe.getVue_sommets().stream().filter(s -> (s.getNom() + " ").equals(a.getNom_sommet())).findAny().get();
+                Vue_sommet vue2 = this.vue_graphe.getVue_sommets().stream().filter(s -> (s.getNom() + " ").equals(b.getNom_sommet())).findFirst().get();
+                g.setColor(Color.BLACK);
+                g.drawLine(vue.getCoorX(), vue.getCoorY(), vue2.getCoorX(), vue2.getCoorY());
+
+            }catch (Exception e){
+
+            }
+        }
     }
     public Color chooseColor(Sommet s){
         switch (s.getNum_ligne()){
@@ -236,7 +252,7 @@ public class App extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(app.active_kruskal == false) {
-                    app.repaint();
+                    ////app.repaint();
                     app.update(frame.getGraphics(),null,null);
                     app.active_kruskal = true;
                 }else {
@@ -292,10 +308,10 @@ public class App extends JPanel {
 
         splitPane = new JSplitPane();
 
-        app.setBorder(new LineBorder(Color.BLACK));
+       // app.setBorder(new LineBorder(Color.BLACK));
 
         bottomPanel = new JPanel();
-        bottomPanel.setBorder(new LineBorder(Color.blue));
+    //    bottomPanel.setBorder(new LineBorder(Color.blue));
 
         inputPanel = new JPanel();
 
@@ -312,7 +328,7 @@ public class App extends JPanel {
         bottomPanel.add(inputPanel, BorderLayout.NORTH);
 
         app.textArea.setPreferredSize(new Dimension(440, 800));
-        app.textArea.setBorder(new LineBorder(Color.pink));
+     //   app.textArea.setBorder(new LineBorder(Color.pink));
         bottomPanel.add(app.textArea, BorderLayout.SOUTH);
 
         inputPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 500));
@@ -334,7 +350,7 @@ public class App extends JPanel {
         comboBox_dest.setMaximumSize(new Dimension(200, 500));
 
 
-        inputPanel.setBorder(new LineBorder(Color.red));
+        //inputPanel.setBorder(new LineBorder(Color.red));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
